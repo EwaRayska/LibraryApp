@@ -11,6 +11,21 @@ var summaries = new[]
     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
 };
 
+var books = new[]
+{
+    "W pustyni i w puszczy",
+    "Krzy¿acy",
+    "Kubuœ Puchatek",
+    "Lalka",
+    "D¿uma",
+    "Tango",
+    "Akademia Pana Kleksa",
+    "Harry Potter",
+    "Hobbit",
+    "Pan Tadeusz",
+    "Balladyna"
+};
+
 app.MapGet("/weatherforecast", () =>
 {
     var forecast = Enumerable.Range(1, 5).Select(index =>
