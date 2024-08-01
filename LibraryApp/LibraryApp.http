@@ -3,4 +3,11 @@
 GET {{LibraryApp_HostAddress}}/weatherforecast/
 Accept: application/json
 
+
+###
+
+GET {{LibraryApp_HostAddress}}/books/
+Accept: application/json
+
+
 ###

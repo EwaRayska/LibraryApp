@@ -1,3 +1,5 @@
+using System.Diagnostics.Eventing.Reader;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -11,7 +13,7 @@ var summaries = new[]
     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
 };
 
-var books = new[]
+var titles = new[]
 {
     "W pustyni i w puszczy",
     "Krzy¿acy",
@@ -39,9 +41,22 @@ app.MapGet("/weatherforecast", () =>
     return forecast;
 });
 
+app.MapGet("/books", () =>
+{
+    var books = new Book
+    (
+        titles[Random.Shared.Next(titles.Length)]
+    );
+    return books;
+});
+
 app.Run();
 
 internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {
     public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+}
+
+internal record Book(string? Title)
+{
 }
