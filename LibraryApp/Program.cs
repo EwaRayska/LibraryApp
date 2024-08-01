@@ -43,10 +43,12 @@ app.MapGet("/weatherforecast", () =>
 
 app.MapGet("/books", () =>
 {
-    var books = new Book
-    (
+var books = Enumerable.Range(1, 5).Select(index =>
+new Book
+(
         titles[Random.Shared.Next(titles.Length)]
-    );
+    ))
+    .ToArray();
     return books;
 });
 
