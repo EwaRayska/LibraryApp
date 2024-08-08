@@ -43,6 +43,7 @@ app.MapGet("/weatherforecast", () =>
 
 app.MapGet("/books", () =>
 {
+    app.Logger.LogInformation("I'm running on development");
     var books = Enumerable.Range(1, titles.Length).Select(index =>
     new Book
     (
@@ -53,6 +54,10 @@ app.MapGet("/books", () =>
     return books;
 });
 
+app.MapGet("/books/{title}", (string title) =>
+    titles.FirstOrDefault(t => t == title)
+);
+
 app.Run();
 
 internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
@@ -60,6 +65,8 @@ internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary
     public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
 }
 
-internal record Book(int Id, string? Title)
+public record Book(int Id, string? Title)
 {
 }
+
+public partial class Program { }
