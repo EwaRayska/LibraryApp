@@ -24,5 +24,23 @@ namespace LibraryApp.API.Tests
             Assert.NotNull(result);
             Assert.Equal(11, result.Length);
         }
+
+        [Fact]
+        public async Task Get_ReturnBookByItsTitle()
+        {
+            //arrange
+            await using var application = new WebApplicationFactory<Program>();
+            using var client = application.CreateClient();
+
+            //act
+            var response = await client.GetAsync("/books/Balladyna");
+
+            //assert \
+            response.EnsureSuccessStatusCode();
+            var result = await response.Content.ReadAsStringAsync();
+
+            Assert.NotNull(result);
+            Assert.Equal("Balladyna", result);
+        }
     }
 }
