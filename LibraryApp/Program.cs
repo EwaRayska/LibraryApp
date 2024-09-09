@@ -14,19 +14,19 @@ var summaries = new[]
     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
 };
 
-Dictionary<string, string> titles = new Dictionary<string, string>();
+List<Book> books = new List<Book>();
 
-Book b1 = new Book("W pustyni i w puszczy", "Henryk Sienkiewicz");
-Book b2 = new Book("Krzy¿acy", "Henryk Sienkiewicz");
-Book b3 = new Book("Kubuœ Puchatek", "A.A. Milne");
-Book b4 = new Book("Lalka", "Boleslaw Prus");
-Book b5 = new Book("D¿uma", "Albert Camus");
-Book b6 = new Book("Tango", "Slawomir Mrozek");
-Book b7 = new Book("Akademia Pana Kleksa", "Jan Brzechwa");
-Book b8 = new Book("Harry Potter", "J.K. Rowling");
-Book b9 = new Book("Hobbit", "J.R.R. Tolkien");
-Book b10 = new Book("Pan Tadeusz", "Adam Mickiewicz");
-Book b11 = new Book("Balladyna", "Juliusz Slowacki");
+books.Add(new Book("W pustyni i w puszczy", "Henryk Sienkiewicz"));
+books.Add(new Book("Krzy¿acy", "Henryk Sienkiewicz"));
+books.Add(new Book("Kubuœ Puchatek", "A.A. Milne"));
+books.Add(new Book("Lalka", "Boleslaw Prus"));
+books.Add(new Book("D¿uma", "Albert Camus"));
+books.Add(new Book("Tango", "Slawomir Mrozek"));
+books.Add(new Book("Akademia Pana Kleksa", "Jan Brzechwa"));
+books.Add(new Book("Harry Potter", "J.K. Rowling"));
+books.Add(new Book("Hobbit", "J.R.R. Tolkien"));
+books.Add(new Book("Pan Tadeusz", "Adam Mickiewicz"));
+books.Add(new Book("Balladyna", "Juliusz Slowacki"));
 
 app.MapGet("/weatherforecast", () =>
 {
@@ -44,19 +44,12 @@ app.MapGet("/weatherforecast", () =>
 app.MapGet("/books", () =>
 {
     app.Logger.LogInformation("I'm running on development");
-    var books = Enumerable.Range(1, titles.Count).Select(index =>
-    new Book
-    (
-            index,
-            titles.Keys.ElementAt(index),
-            titles.Values.ElementAt(index)
-        ))
-    .ToArray();
+    Enumerable.Range(1, books.Count).ToArray();
     return books;
 });
 
 app.MapGet("/books/{title}", (string title) =>
-    titles.Keys.FirstOrDefault(t => t == title)
+    books.FirstOrDefault(b => b.Title == title)
 );
 
 /*app.MapGet("/books/{author}", (string author) =>
