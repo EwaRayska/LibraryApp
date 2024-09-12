@@ -45,8 +45,14 @@ app.MapGet("/weatherforecast", () =>
 app.MapGet("/books", () => books);
 
 app.MapGet("/books/{title}", (string title) =>
-    books.FirstOrDefault(b => b.Title == title)
-);
+{
+    var book = books.FirstOrDefault(b => b.Title == title);
+    if (book == null)
+    {
+        return Results.NotFound();
+    }
+    return Results.Ok(book);
+});
 
 /*app.MapGet("/books/{author}", (string author) =>
     titles.Values.FirstOrDefault(a => a == author)
