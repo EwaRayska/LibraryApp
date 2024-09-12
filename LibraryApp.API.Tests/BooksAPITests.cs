@@ -35,12 +35,39 @@ namespace LibraryApp.API.Tests
             //act
             var response = await client.GetAsync("/books/Balladyna");
 
-            //assert \
+            //assert
             response.EnsureSuccessStatusCode();
-            var result = await response.Content.ReadAsStringAsync();
+            var stringResult = await response.Content.ReadAsStringAsync();
+            var result = await response.Content.ReadFromJsonAsync<Book>();
 
             Assert.NotNull(result);
-            Assert.Equal("Balladyna", result);
+            Assert.Equal("Balladyna", result.Title);
+        }
+
+        [Fact]
+        public async Task Post_AddNewBook()
+        {
+            //arrange
+            await using var application = new WebApplicationFactory<Program>();
+            using var client = application.CreateClient();
+
+            var newBook = new Book
+            {
+                Title = "Test",
+                Author = "Jan Kowalski"
+            };
+
+            //act
+            var response = await client.PostAsJsonAsync("/books", newBook);
+
+            //assert
+            response.EnsureSuccessStatusCode();
+
+            var stringResult = await response.Content.ReadAsStringAsync();
+            var createdBook = await response.Content.ReadFromJsonAsync<Book>();
+            Assert.NotNull(createdBook);
+            Assert.Equal("Test", createdBook.Title);
+            Assert.Equal("Jan Kowalski", createdBook.Author);
         }
     }
 }
