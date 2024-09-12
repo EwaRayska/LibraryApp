@@ -14,19 +14,20 @@ var summaries = new[]
     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
 };
 
-List<Book> books = new List<Book>();
-
-books.Add(new Book("W pustyni i w puszczy", "Henryk Sienkiewicz"));
-books.Add(new Book("Krzy¿acy", "Henryk Sienkiewicz"));
-books.Add(new Book("Kubuœ Puchatek", "A.A. Milne"));
-books.Add(new Book("Lalka", "Boleslaw Prus"));
-books.Add(new Book("D¿uma", "Albert Camus"));
-books.Add(new Book("Tango", "Slawomir Mrozek"));
-books.Add(new Book("Akademia Pana Kleksa", "Jan Brzechwa"));
-books.Add(new Book("Harry Potter", "J.K. Rowling"));
-books.Add(new Book("Hobbit", "J.R.R. Tolkien"));
-books.Add(new Book("Pan Tadeusz", "Adam Mickiewicz"));
-books.Add(new Book("Balladyna", "Juliusz Slowacki"));
+var books = new List<Book>
+{
+    new (1, "W pustyni i w puszczy", "Henryk Sienkiewicz"),
+    new (2, "Krzy¿acy", "Henryk Sienkiewicz"),
+    new (3, "Kubuœ Puchatek", "A.A. Milne"),
+    new (4, "Lalka", "Boleslaw Prus"),
+    new (5, "D¿uma", "Albert Camus"),
+    new (6, "Tango", "Slawomir Mrozek"),
+    new (7, "Akademia Pana Kleksa", "Jan Brzechwa"),
+    new (8, "Harry Potter", "J.K. Rowling"),
+    new (9, "Hobbit", "J.R.R. Tolkien"),
+    new (10, "Pan Tadeusz", "Adam Mickiewicz"),
+    new (11, "Balladyna", "Juliusz Slowacki")
+};
 
 app.MapGet("/weatherforecast", () =>
 {
