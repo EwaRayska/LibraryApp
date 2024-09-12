@@ -42,12 +42,7 @@ app.MapGet("/weatherforecast", () =>
     return forecast;
 });
 
-app.MapGet("/books", () =>
-{
-    app.Logger.LogInformation("I'm running on development");
-    Enumerable.Range(1, books.Count).ToArray();
-    return books;
-});
+app.MapGet("/books", () => books);
 
 app.MapGet("/books/{title}", (string title) =>
     books.FirstOrDefault(b => b.Title == title)
