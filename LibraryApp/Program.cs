@@ -1,4 +1,5 @@
 using LibraryApp;
+using Microsoft.AspNetCore.Builder;
 using System.Diagnostics.Eventing.Reader;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -57,6 +58,14 @@ app.MapGet("/books/{title}", (string title) =>
 /*app.MapGet("/books/{author}", (string author) =>
     titles.Values.FirstOrDefault(a => a == author)
 );*/
+
+app.MapPost("/books", (Book newBook) =>
+{ 
+    newBook.Id = books.Max(b => b.Id) + 1;
+    books.Add(newBook);
+
+    return Results.Created("/books/{newBook.Title}", newBook);
+ });
 
 app.Run();
 
