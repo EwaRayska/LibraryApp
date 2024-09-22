@@ -64,7 +64,8 @@ app.MapPost("/books", (Book newBook) =>
     newBook.Id = books.Max(b => b.Id) + 1;
     books.Add(newBook);
 
-    return Results.Created("/books/{newBook.Title}", newBook);
+    return Results.Created($"/books/{newBook.Id}", newBook);
+ });
  });
 
 app.Run();
