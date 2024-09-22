@@ -66,7 +66,18 @@ app.MapPost("/books", (Book newBook) =>
 
     return Results.Created($"/books/{newBook.Id}", newBook);
  });
- });
+
+app.MapDelete("/books/{id}", (int id) =>
+{
+    var book = books.FirstOrDefault(b => b.Id == id);
+    if (book == null)
+    {
+        return Results.NotFound();
+    }
+
+    books.Remove(book);
+    return Results.NoContent();
+});
 
 app.Run();
 
