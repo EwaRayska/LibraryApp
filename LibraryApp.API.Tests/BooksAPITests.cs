@@ -69,5 +69,47 @@ namespace LibraryApp.API.Tests
             Assert.Equal("Test", createdBook.Title);
             Assert.Equal("Jan Kowalski", createdBook.Author);
         }
+
+        [Fact]
+        public async Task Delete_ShouldRemoveBookSuccessfully()
+        {
+            //arrange
+            var bookToRemove = new Book
+            {
+                Title = "To be deleted",
+                Author = "Anna Nowak"
+            };
+
+            var createResponse = await client.PostAsJsonAsync("/books", bookToRemove);
+            createResponse.EnsureSuccessStatusCode();
+            var createdBook = await createResponse.Content.ReadFromJsonAsync<Book>();
+
+            //act
+            if(createdBook == null)
+            {
+                throw new Exception("Failed to create the book. The response returned null.");
+            }
+            var response = await client.DeleteAsync($"/books/{createdBook.Id}");
+
+
+            //assert
+            response.EnsureSuccessStatusCode();
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+
+
+            var getResponse = await client.GetAsync($"/books/{createdBook.Id}");
+            Assert.Equal(HttpStatusCode.NotFound, getResponse.StatusCode);
+        }
+
+        public Task InitializeAsync()
+        {
+            return Task.CompletedTask;
+        }
+
+        public async Task DisposeAsync()
+        {
+            client.Dispose();
+            await application.DisposeAsync();
+        }
     }
 }
