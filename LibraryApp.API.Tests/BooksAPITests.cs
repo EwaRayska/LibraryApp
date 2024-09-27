@@ -19,9 +19,7 @@ namespace LibraryApp.API.Tests
         [Fact]
         public async Task GetAllBooksReturnTheSameNumberOfBooksAsExisting()
         {
-            //arrange
-            await using var application = new WebApplicationFactory<Program>(); 
-            using var client = application.CreateClient();
+            //arrange  
 
             //act
             var response = await client.GetAsync("/books");
@@ -36,14 +34,12 @@ namespace LibraryApp.API.Tests
         }
 
         [Fact]
-        public async Task Get_ReturnBookByItsTitle()
+        public async Task Get_ReturnBookByItsId()
         {
             //arrange
-            await using var application = new WebApplicationFactory<Program>();
-            using var client = application.CreateClient();
 
             //act
-            var response = await client.GetAsync("/books/Balladyna");
+            var response = await client.GetAsync("/books/1");
 
             //assert
             response.EnsureSuccessStatusCode();
@@ -51,16 +47,13 @@ namespace LibraryApp.API.Tests
             var result = await response.Content.ReadFromJsonAsync<Book>();
 
             Assert.NotNull(result);
-            Assert.Equal("Balladyna", result.Title);
+            Assert.Equal(1, result.Id);
         }
 
         [Fact]
         public async Task Post_AddNewBook()
         {
             //arrange
-            await using var application = new WebApplicationFactory<Program>();
-            using var client = application.CreateClient();
-
             var newBook = new Book
             {
                 Title = "Test",
