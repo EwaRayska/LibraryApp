@@ -1,11 +1,21 @@
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.VisualStudio.TestPlatform.TestHost;
+using System.Net;
 using System.Net.Http.Json;
 
 namespace LibraryApp.API.Tests
 {
-    public class BooksAPITests
+    public class BooksAPITests : IAsyncLifetime
     {
+        private readonly WebApplicationFactory<Program> application;
+        private readonly HttpClient client;
+
+        public BooksAPITests()
+        {
+            application = new WebApplicationFactory<Program>();
+            client = application.CreateClient();
+        }
+
         [Fact]
         public async Task GetAllBooksReturnTheSameNumberOfBooksAsExisting()
         {
