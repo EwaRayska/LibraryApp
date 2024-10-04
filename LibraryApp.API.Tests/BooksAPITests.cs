@@ -1,19 +1,47 @@
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestPlatform.TestHost;
+using Moq;
 using System.Net;
 using System.Net.Http.Json;
 
 namespace LibraryApp.API.Tests
 {
-    public class BooksAPITests : IAsyncLifetime
+    public class BooksAPITests : IAsyncLifetime, IClassFixture<WebApplicationFactory<Program>>
     {
-        private readonly WebApplicationFactory<Program> application;
-        private readonly HttpClient client;
+        private readonly WebApplicationFactory<Program> _application;
+        private readonly HttpClient _client;
 
-        public BooksAPITests()
+        public BooksAPITests(WebApplicationFactory<Program> application)
         {
-            application = new WebApplicationFactory<Program>();
-            client = application.CreateClient();
+            _application = application;
+            _client = _application.WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureServices(services =>
+                {
+                    var desriptor = services.SingleOrDefault(d => d.ServiceType == typeof(IBookRepository));
+                    if (desriptor != null)
+                    {
+                        services.Remove(desriptor);
+                    }
+
+                    var mockBookRepository = new Mock<IBookRepository>();
+
+                    var books = new List<Book>()
+                    {
+                        new Book { Id = 1, Title="Book One", Author = "Author A" },
+                        new Book { Id = 2, Title = "Book Two", Author = "Author B" },
+                        new Book { Id = 3, Title = "Book Three", Author = "Author C" }
+                    };
+
+                    mockBookRepository.Setup(repo => repo.GetAllBooks()).Returns(books);
+                    mockBookRepository.Setup(repo => repo.GetBookById(It.IsAny<int>()))
+                        .Returns((int id) => books.FirstOrDefault(b => b.Id == id));
+
+                    services.AddScoped(_ => mockBookRepository.Object);
+
+                });
+            }).CreateClient();
         }
 
         [Fact]
@@ -22,7 +50,7 @@ namespace LibraryApp.API.Tests
             //arrange  
 
             //act
-            var response = await client.GetAsync("/books");
+            var response = await _client.GetAsync("/books");
 
             //assert
             response.EnsureSuccessStatusCode();
@@ -30,7 +58,7 @@ namespace LibraryApp.API.Tests
             var result = await response.Content.ReadFromJsonAsync<Book[]>();
 
             Assert.NotNull(result);
-            Assert.Equal(11, result.Length);
+            Assert.Equal(3, result.Length);
         }
 
         [Fact]
@@ -39,7 +67,7 @@ namespace LibraryApp.API.Tests
             //arrange
 
             //act
-            var response = await client.GetAsync("/books/1");
+            var response = await _client.GetAsync("/books/1");
 
             //assert
             response.EnsureSuccessStatusCode();
@@ -61,7 +89,7 @@ namespace LibraryApp.API.Tests
             };
 
             //act
-            var response = await client.PostAsJsonAsync("/books", newBook);
+            var response = await _client.PostAsJsonAsync("/books", newBook);
 
             //assert
             response.EnsureSuccessStatusCode();
@@ -83,7 +111,7 @@ namespace LibraryApp.API.Tests
                 Author = "Anna Nowak"
             };
 
-            var createResponse = await client.PostAsJsonAsync("/books", bookToRemove);
+            var createResponse = await _client.PostAsJsonAsync("/books", bookToRemove);
             createResponse.EnsureSuccessStatusCode();
             var createdBook = await createResponse.Content.ReadFromJsonAsync<Book>();
 
@@ -92,7 +120,7 @@ namespace LibraryApp.API.Tests
             {
                 throw new Exception("Failed to create the book. The response returned null.");
             }
-            var response = await client.DeleteAsync($"/books/{createdBook.Id}");
+            var response = await _client.DeleteAsync($"/books/{createdBook.Id}");
 
 
             //assert
@@ -100,7 +128,7 @@ namespace LibraryApp.API.Tests
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
 
 
-            var getResponse = await client.GetAsync($"/books/{createdBook.Id}");
+            var getResponse = await _client.GetAsync($"/books/{createdBook.Id}");
             Assert.Equal(HttpStatusCode.NotFound, getResponse.StatusCode);
         }
 
@@ -111,8 +139,8 @@ namespace LibraryApp.API.Tests
 
         public async Task DisposeAsync()
         {
-            client.Dispose();
-            await application.DisposeAsync();
+            _client.Dispose();
+            await _application.DisposeAsync();
         }
     }
 }
